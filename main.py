@@ -1,5 +1,6 @@
 from load import RDSReader
 from control import QualityControl
+from ttest import TTestHandler
 import sys
 
 def main():
@@ -29,6 +30,9 @@ def main():
     #Plot the results of qc
     qc.plot_modification_levels()
 
+    analyzer = TTestHandler(genomemap_df, samplekey_df, data_matrix)
+    analyzer.perform_t_tests()
+    analyzer.plot_p_values()
 
 if __name__ == '__main__':
     main()
