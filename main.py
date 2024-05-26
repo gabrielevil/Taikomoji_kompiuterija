@@ -30,11 +30,11 @@ def main():
     #Plot the results of qc
     #qc.plot_modification_levels()
 
-    analyzer = TTestHandler(genomemap_df, samplekey_df, data_matrix)
-    analyzer.perform_t_tests()
-    analyzer.plot_p_values()
-    #analyzer.plot_mean_diff()
-    analyzer.plot_volcano()
+    t_test = TTestHandler(samplekey_df, data_matrix, "bcell", 43)
+    t_test.perform_t_tests()
+    t_test.plot_p_values()
+    t_test.plot_mean_diff()
+    t_test.plot_volcano()
 
 if __name__ == '__main__':
     main()

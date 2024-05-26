@@ -4,19 +4,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class TTestHandler:
-    def __init__(self, genmap, sample, dat):
-        self.genmap = genmap
+    def __init__(self, sample, dat, cell_type, age):
         self.sample = sample
         self.dat = dat
         self.t_test_results = []
         self.p_values = []
         self.mean_differences = []
         self.count = 0
+        self.cell_type = cell_type
+        self.age = age
 
     def perform_t_tests(self):
-        # Creating boolean arrays for indexing dat
-        condition_high = ((self.sample.iloc[:, 8] > 43) & (self.sample.iloc[:, 4] == "bcell")).to_numpy()
-        condition_low = ((self.sample.iloc[:, 8] <= 43) & (self.sample.iloc[:, 4] == "bcell")).to_numpy()
+        condition_high = ((self.sample.iloc[:, 8] > self.age) & (self.sample.iloc[:, 4] == self.cell_type)).to_numpy()
+        condition_low = ((self.sample.iloc[:, 8] <= self.age) & (self.sample.iloc[:, 4] == self.cell_type)).to_numpy()
 
         for i in range(self.dat.shape[0]):  
             group1 = self.dat[i, condition_high]
@@ -35,7 +35,17 @@ class TTestHandler:
         print("Count of tests with significant p-values: ", self.count)
 
     def plot_p_values(self):
-        plt.hist(self.p_values, bins=20, color='blue', edgecolor='black')
+        counts, bins, patches = plt.hist(self.p_values, bins=80, edgecolor='black')
+
+        # Color code by p-value threshold
+        for patch, left_side in zip(patches, bins[:-1]):
+            if left_side < 0.05:
+                # If the bin includes p-values < 0.05, color it blue
+                patch.set_facecolor('blue')
+            else:
+                # If the bin is entirely >= 0.05, color it grey
+                patch.set_facecolor('grey')
+
         plt.title('Histogram of P-values from T-Tests')
         plt.xlabel('P-value')
         plt.ylabel('Frequency')
@@ -51,18 +61,18 @@ class TTestHandler:
     def plot_volcano(self):
         neg_log_pvals = -np.log10(np.array(self.p_values))
 
-        fold_change_threshold = 0.05
+        mean_differences_threshold = 0.05
         p_value_threshold = 0.05
 
         # Color points
         colors = []
         for log_fold_change, p_value in zip(self.mean_differences, neg_log_pvals):
-            if log_fold_change > fold_change_threshold and p_value > -np.log10(p_value_threshold):
-                colors.append('red')  # Significant and up-regulated
-            elif log_fold_change < -fold_change_threshold and p_value > -np.log10(p_value_threshold):
-                colors.append('blue')  # Significant and down-regulated
+            if log_fold_change > mean_differences_threshold and p_value > -np.log10(p_value_threshold):
+                colors.append('red') 
+            elif log_fold_change < -mean_differences_threshold and p_value > -np.log10(p_value_threshold):
+                colors.append('blue')
             else:
-                colors.append('grey')  # Not significant
+                colors.append('grey')
 
         # Create plot
         plt.figure(figsize=(10, 6))
@@ -71,7 +81,7 @@ class TTestHandler:
         plt.xlabel('Mean differences')
         plt.ylabel('-Log10 P-value')
         plt.axhline(y=-np.log10(p_value_threshold), color='red', linestyle='dashed')
-        plt.axvline(x=fold_change_threshold, color='black', linestyle='dashed')
-        plt.axvline(x=-fold_change_threshold, color='black', linestyle='dashed')
+        plt.axvline(x=mean_differences_threshold, color='black', linestyle='dashed')
+        plt.axvline(x=-mean_differences_threshold, color='black', linestyle='dashed')
         plt.grid(True)
         plt.show()
