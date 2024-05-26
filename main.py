@@ -25,14 +25,16 @@ def main():
     print("Data:\n", data_matrix)
 
     #Perform quality control on data
-    qc = QualityControl(data_matrix, genomemap_df)
-    qc.calculate_mean_modifications()
+    #qc = QualityControl(data_matrix, genomemap_df)
+    #qc.calculate_mean_modifications()
     #Plot the results of qc
-    qc.plot_modification_levels()
+    #qc.plot_modification_levels()
 
     analyzer = TTestHandler(genomemap_df, samplekey_df, data_matrix)
     analyzer.perform_t_tests()
     analyzer.plot_p_values()
+    #analyzer.plot_mean_diff()
+    analyzer.plot_volcano()
 
 if __name__ == '__main__':
     main()
