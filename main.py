@@ -25,13 +25,15 @@ def main():
     print("Data:\n", data_matrix)
 
     #Perform quality control on data
-    #qc = QualityControl(data_matrix, genomemap_df)
-    #qc.calculate_mean_modifications()
+    qc = QualityControl(data_matrix, genomemap_df)
+    qc.calculate_mean_modifications()
     #Plot the results of qc
-    #qc.plot_modification_levels()
+    qc.plot_modification_levels()
 
+    # Perform t-test
     t_test = TTestHandler(samplekey_df, data_matrix, "bcell", 43)
     t_test.perform_t_tests()
+    # Plot t-test results
     t_test.plot_p_values()
     t_test.plot_mean_diff()
     t_test.plot_volcano()

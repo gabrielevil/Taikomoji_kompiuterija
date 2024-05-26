@@ -36,14 +36,10 @@ class TTestHandler:
 
     def plot_p_values(self):
         counts, bins, patches = plt.hist(self.p_values, bins=80, edgecolor='black')
-
-        # Color code by p-value threshold
         for patch, left_side in zip(patches, bins[:-1]):
             if left_side < 0.05:
-                # If the bin includes p-values < 0.05, color it blue
                 patch.set_facecolor('blue')
             else:
-                # If the bin is entirely >= 0.05, color it grey
                 patch.set_facecolor('grey')
 
         plt.title('Histogram of P-values from T-Tests')
@@ -52,7 +48,7 @@ class TTestHandler:
         plt.show()
 
     def plot_mean_diff(self):
-        plt.hist(self.mean_differences, bins=20, color='blue', edgecolor='black')
+        plt.hist(self.mean_differences, bins=80, color='blue', edgecolor='black')
         plt.title('Histogram of mean differences from T-Tests')
         plt.xlabel('Mean differences')
         plt.ylabel('Frequency')
