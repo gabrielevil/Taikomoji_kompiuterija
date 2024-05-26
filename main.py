@@ -1,4 +1,5 @@
 from load import RDSReader
+from control import QualityControl
 import sys
 
 def main():
