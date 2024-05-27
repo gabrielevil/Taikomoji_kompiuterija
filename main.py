@@ -1,6 +1,9 @@
 from load import RDSReader
 from control import QualityControl
 from ttest import TTestHandler
+from corrPlot import CorrelationPlot
+from analysis import NormalityAnalysis
+import pandas as pd
 import sys
 
 def main():
@@ -38,6 +41,17 @@ def main():
     t_test.plot_mean_diff()
     t_test.plot_volcano()
 
+    #Correlation heatmap
+    correlation_plot = CorrelationPlot(data_matrix)
+    correlation_plot.calculate_correlation_matrix()
+    correlation_plot.plot_correlation()
+
+    correlation_plot.hierarchical_clustering()
+
+    #Normality test
+    data_df = pd.DataFrame(data_matrix, columns=samplekey_df.index)
+    smoking_analysis = NormalityAnalysis(samplekey_df, data_df, "tcd8")
+    smoking_analysis.analyze()
+
 if __name__ == '__main__':
     main()
-
